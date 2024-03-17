@@ -13,6 +13,7 @@ class App:
         pyxel.init(160, 120, title=self.TITLE, fps=self.FPS)
         self.player = Player()
         pyxel.run(self.update, self.draw)
+
     def update(self) -> None:
         """
         Update the game state.

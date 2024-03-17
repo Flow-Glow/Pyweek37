@@ -1,5 +1,7 @@
 import pyxel
+
 from .input import Input
+
 
 class Player:
     """Player class."""
@@ -60,6 +62,6 @@ class Player:
 
         :return:
         """
-        pyxel.rect(self.x, (self.y ), 8, 8, 9)
+        pyxel.rect(self.x, self.y, 8, 8, 9)
         pyxel.text(0, 0, f"({self.x},{self.y})", 7)
         pyxel.camera(0, self.scroll_y+20)
