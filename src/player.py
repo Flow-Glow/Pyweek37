@@ -13,7 +13,7 @@ class Player:
         self.dx = 0
         self.input = Input()
         self.scroll_y = 0
-        self.SCROLL_BORDER_Y = pyxel.height - 8
+        self.SCROLL_BORDER_Y = pyxel.height - 10
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -44,6 +44,8 @@ class Player:
         # Check y-axis boundaries and handle vertical scrolling
         if self.y > self.scroll_y + self.SCROLL_BORDER_Y:
             self.scroll_y = self.y - self.SCROLL_BORDER_Y
+            self.y = self.scroll_y + self.SCROLL_BORDER_Y
+
         elif self.y < self.scroll_y:
             self.scroll_y = self.y
 
@@ -63,5 +65,5 @@ class Player:
         :return:
         """
         pyxel.rect(self.x, self.y, 8, 8, 9)
-        pyxel.text(0, 0, f"({self.x},{self.y})", 7)
-        pyxel.camera(0, self.scroll_y+20)
+        pyxel.text(self.x - 10, self.y - 10, f"({self.x},{self.y})", 0)
+        pyxel.camera(0, self.scroll_y)

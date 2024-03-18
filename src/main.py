@@ -6,11 +6,11 @@ from .player import Player
 class App:
     """Main application class."""
 
-    FPS = 60
+    FPS = 40
     TITLE = "Pyweek37"
 
     def __init__(self) -> None:
-        pyxel.init(160, 120, title=self.TITLE, fps=self.FPS)
+        pyxel.init(120, 160, title=self.TITLE, fps=self.FPS)
         self.player = Player()
         pyxel.run(self.update, self.draw)
 
@@ -30,5 +30,5 @@ class App:
 
         :return:
         """
-        pyxel.cls(0)
+        pyxel.cls(7)
         self.player.draw()
