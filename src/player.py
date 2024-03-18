@@ -6,13 +6,13 @@ from .input import Input
 class Player:
     """Player class."""
 
-    def __init__(self) -> None:
-        self.x = 0
+    def __init__(self, inputs) -> None:
+        self.x = pyxel.width // 2
         self.y = 0
         self.speed = 2
         self.dx = 0
         self.d = 1
-        self.input = Input()
+        self.input = inputs
         self.scroll_y = 0
         self.SCROLL_BORDER_Y = pyxel.height // 3 * 2
 

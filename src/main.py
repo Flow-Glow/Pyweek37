@@ -3,6 +3,7 @@ import os
 
 from .player import Player
 from .map import Map
+from .input import Input
 
 class App:
     """Main application class."""
@@ -13,8 +14,10 @@ class App:
     def __init__(self) -> None:
         pyxel.init(120, 160, title=self.TITLE, fps=self.FPS)
         pyxel.load("../Assets/tube.pyxres")
-        self.player = Player()
+        self.input = Input()
+        self.player = Player(self.input)
         self.map = Map()
+        self.playing = False
         pyxel.run(self.update, self.draw)
 
     def update(self) -> None:
@@ -23,8 +26,12 @@ class App:
 
         :return:
         """
-        self.player.update()
-        self.map.update(self.player.scroll_y)
+        if self.playing:
+            self.player.update()
+            self.map.update(self.player.scroll_y)
+        elif self.input.update():
+            self.playing = True
+
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
