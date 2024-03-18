@@ -9,11 +9,12 @@ class Player:
     def __init__(self) -> None:
         self.x = 0
         self.y = 0
-        self.speed = 1
+        self.speed = 2
         self.dx = 0
+        self.d = 1
         self.input = Input()
         self.scroll_y = 0
-        self.SCROLL_BORDER_Y = pyxel.height - 10
+        self.SCROLL_BORDER_Y = pyxel.height // 3 * 2
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -30,6 +31,10 @@ class Player:
             self.dx = -1
         elif Input.RIGHT in inputs:
             self.dx = 1
+
+        # set direction player is facing
+        if self.dx: 
+            self.d = pyxel.sgn(self.dx)
 
         # Update position
         self.x += self.dx
@@ -64,6 +69,5 @@ class Player:
 
         :return:
         """
-        pyxel.rect(self.x, self.y, 8, 8, 9)
-        pyxel.text(self.x - 10, self.y - 10, f"({self.x},{self.y})", 0)
-        pyxel.camera(0, self.scroll_y)
+        pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16*self.d, 9, 0)
+        pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
