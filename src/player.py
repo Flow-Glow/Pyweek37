@@ -13,16 +13,23 @@ class Player:
         self.reset()
 
     def reset(self):
+        """
+        Reset the player.
+
+        :return:none
+        """
+
         self.x = pyxel.width // 2
         self.y = 0
         self.speedx = 1
         self.speed = 1
-        self.friction = .3
+        self.friction = .2
         self.dx = 0
         self.d = 1
         self.scroll_y = 0
-        self.SCROLL_BORDER_Y = pyxel.height // 3 * 2
+        self.SCROLL_BORDER_Y = pyxel.height // 3
         self.dead = False
+        self.time_on_rock = 0
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -34,26 +41,21 @@ class Player:
 
         # Move left or right
         if Input.LEFT in inputs:
-            self.dx = -self.speedx
+            self.dx = max(self.dx - self.speedx / 3, -self.speedx)
         elif self.dx < 0:
             self.dx = min(0, self.dx + self.friction)
         if Input.RIGHT in inputs:
-            self.dx = self.speedx
+            self.dx = min(self.dx + self.speedx / 3, self.speedx)
         elif self.dx > 0:
             self.dx = max(0, self.dx - self.friction)
-        elif Input.CONFIRM in inputs:
-            if self.speed == 0:
-                self.speed = 1
-            else:
-                self.speed = 0
 
         # set direction player is facing
         if self.dx:
             self.d = pyxel.sgn(self.dx)
 
         # Update position
-        self.x += int(self.dx)
-        self.y += int(self.speed)
+        self.x += self.dx
+        self.y += self.speed
 
         # Check x-axis boundaries
         if self.x > pyxel.width - 8:
@@ -70,20 +72,42 @@ class Player:
             self.scroll_y = self.y
 
     def is_colliding(self) -> bool:
-        for xi in range(self.x, self.x + 16, 4):
-            for yi in range(self.y, self.y + 8, 4):
+        """
+        Handle collisions
+
+        :return: If the player colliding with rock 
+        """
+
+        for xi in range(int(self.x), int(self.x) + 16, 4):
+            for yi in range(int(self.y), int(self.y) + 8, 4):
                 map_type = self.map.tile_type(*self.map.get_tile_at_xy(xi, yi))
-                if map_type == self.map.BAD and pyxel.pget(xi, yi) != pyxel.COLOR_WHITE:
-                    self.speed = 0
-                    self.dead = True
-                elif map_type == self.map.ICE:
-                    self.speed = 3
-                    self.speedx = 3
-                    self.friction = 0
-                else:
-                    self.speedx = max(1, self.speedx - .003)
-                    self.speed = max(1, self.speed - .003)
-                    self.friction = min(.3, self.friction + .001)
+
+                #slow player until stops then kill
+                if map_type == self.map.BAD:
+                    self.time_on_rock = (self.time_on_rock - 1) % 120
+                    if self.time_on_rock > 90:
+                        self.speed = .2
+                        self.speedx = .5
+                    else:
+                        self.speed = .1
+                        self.speedx = .2
+
+                    if self.time_on_rock == 0:
+                        self.dead = True
+                    return True
+
+                # make it s l i p p e r y
+                if map_type == self.map.ICE:
+                    self.speed = min(3, self.speed + .1)
+                    self.speedx = min(2, self.speedx + .05)
+                    self.friction = max(0, self.friction - .05)
+                    return False
+        
+        # gradually reduce ice/rock effects
+        self.speedx = max(1, self.speedx - .015)
+        self.speed = max(1, self.speed - .01)
+        self.friction = min(.3, self.friction + .01)
+        self.time_on_rock = 0
 
         return False
 
@@ -105,4 +129,4 @@ class Player:
         :return:
         """
         pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16 * self.d, 9, 0)
-        pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
+        #pyxel.text(int(self.x) - 10, int(self.y) - self.scroll_y - 10, f"({self.x},{self.y})", 0)

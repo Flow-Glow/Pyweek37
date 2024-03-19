@@ -32,7 +32,7 @@ class App:
             self.player.update()
             if self.player.dead:
                 self.playing = False
-            self.map.update(self.player.scroll_y)
+            self.map.update(int(self.player.scroll_y))
         elif self.input.update():
             self.playing = True
             self.player.reset()
