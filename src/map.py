@@ -34,7 +34,7 @@ class Map:
     def get_tile_at_xy(self, x, y) -> (int, int):
         """
         return reference tile at location (x, y) in game world coords
-
+        
         :param x: world x-coordinate
         :param y: world y-coordinate
         :return: (tilex, tiley): x,y coordinate (in tilesheet) at this location
