@@ -1,14 +1,15 @@
 import pyxel
-import os
 
-from .player import Player
-from .map import Map
+from .hud import Hud
 from .input import Input
+from .map import Map
+from .player import Player
+
 
 class App:
     """Main application class."""
 
-    FPS = 40
+    FPS = 30
     TITLE = "Pyweek37"
 
     def __init__(self) -> None:
@@ -17,6 +18,7 @@ class App:
         self.input = Input()
         self.player = Player(self.input)
         self.map = Map()
+        self.hud = Hud(self.player)
         self.playing = False
         pyxel.run(self.update, self.draw)
 
@@ -41,6 +43,8 @@ class App:
 
         :return:
         """
+
         pyxel.cls(7)
         self.map.draw()
+        self.hud.draw()
         self.player.draw()

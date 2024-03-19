@@ -6,15 +6,18 @@ from .input import Input
 class Player:
     """Player class."""
 
-    def __init__(self, inputs) -> None:
+    def __init__(self, inputs: Input) -> None:
         self.x = pyxel.width // 2
         self.y = 0
-        self.speed = 2
+        self.speed = 1
         self.dx = 0
         self.d = 1
         self.input = inputs
         self.scroll_y = 0
         self.SCROLL_BORDER_Y = pyxel.height // 3 * 2
+        self.state = 'alive'
+        self.tilemap_dict = {"good": [[0, 0], ],
+                             "bad": [[3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [0, 1], [3, 1], [4, 1]]}
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -31,9 +34,14 @@ class Player:
             self.dx = -1
         elif Input.RIGHT in inputs:
             self.dx = 1
+        elif Input.CONFIRM in inputs:
+            if self.speed == 0:
+                self.speed = 1
+            else:
+                self.speed = 0
 
         # set direction player is facing
-        if self.dx: 
+        if self.dx:
             self.d = pyxel.sgn(self.dx)
 
         # Update position
@@ -54,14 +62,28 @@ class Player:
         elif self.y < self.scroll_y:
             self.scroll_y = self.y
 
+    def is_colliding(self) -> bool:
+        x1 = int(self.x // 8)
+        y1 = int(self.y // 8)
+        x2 = int((self.x + 15) // 8)
+        y2 = int((self.y + 15) // 8)
+        for yi in range(y1, y2 + 1):
+            for xi in range(x1, x2 + 1):
+                if pyxel.tilemaps[0].pget(xi, yi) == (0, 1):
+                    self.speed = 0
+                    self.state = 'dead'
+        return False
+
     def update(self) -> None:
         """
         Update the player.
 
         :return:
         """
-        inputs = self.input.update()
-        self.movement(inputs)
+        if self.state != 'dead':
+            inputs = self.input.update()
+            self.movement(inputs)
+            self.is_colliding()
 
     def draw(self) -> None:
         """
@@ -69,5 +91,5 @@ class Player:
 
         :return:
         """
-        pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16*self.d, 9, 0)
-        pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
+        pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16 * self.d, 9, 0)
+        # pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
