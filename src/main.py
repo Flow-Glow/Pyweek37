@@ -40,15 +40,12 @@ class App:
         elif not self.player.dead: 
             self.player.update()
             self.map.update(int(self.player.scroll_y))
+            (tilex,tiley) = self.map.get_tile_at_xy(self.player.x+8, self.player.y)
+            self.sfx.update_ground_sound(tilex, tiley)
         elif self.player.y - self.player.SCROLL_BORDER_Y - 1000 < pyxel.height:
             self.player.fall()
         else:
             self.playing = False
-            self.map.update(self.player.scroll_y)
-            (tilex,tiley) = self.map.get_tile_at_xy(self.player.x+8, self.player.y)
-            self.sfx.update_ground_sound(tilex, tiley)
-        elif self.input.update():
-            self.playing = True
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
