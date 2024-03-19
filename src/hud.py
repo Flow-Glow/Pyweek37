@@ -14,5 +14,5 @@ class Hud:
         :return:
         """
         pyxel.text(0, 0, f"Score:{self.player.y // 10}", 0)
-        if self.player.state == 'dead':
+        if self.player.dead:
             pyxel.text(40, 80, "Game Over", 0)

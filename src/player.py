@@ -1,23 +1,28 @@
 import pyxel
 
 from .input import Input
+from .map import Map
 
 
 class Player:
     """Player class."""
 
-    def __init__(self, inputs: Input) -> None:
+    def __init__(self, inputs: Input, maps: Map) -> None:
+        self.input = inputs
+        self.map = maps
+        self.reset()
+
+    def reset(self):
         self.x = pyxel.width // 2
         self.y = 0
+        self.speedx = 1
         self.speed = 1
+        self.friction = .3
         self.dx = 0
         self.d = 1
-        self.input = inputs
         self.scroll_y = 0
         self.SCROLL_BORDER_Y = pyxel.height // 3 * 2
-        self.state = 'alive'
-        self.tilemap_dict = {"good": [[0, 0], ],
-                             "bad": [[3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [0, 1], [3, 1], [4, 1]]}
+        self.dead = False
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -26,14 +31,16 @@ class Player:
         :param inputs: a list of inputs.
         :return: none
         """
-        # Reset dx
-        self.dx = 0
 
         # Move left or right
         if Input.LEFT in inputs:
-            self.dx = -1
-        elif Input.RIGHT in inputs:
-            self.dx = 1
+            self.dx = -self.speedx
+        elif self.dx < 0:
+            self.dx = min(0, self.dx + self.friction)
+        if Input.RIGHT in inputs:
+            self.dx = self.speedx
+        elif self.dx > 0:
+            self.dx = max(0, self.dx - self.friction)
         elif Input.CONFIRM in inputs:
             if self.speed == 0:
                 self.speed = 1
@@ -45,8 +52,8 @@ class Player:
             self.d = pyxel.sgn(self.dx)
 
         # Update position
-        self.x += self.dx
-        self.y += self.speed
+        self.x += int(self.dx)
+        self.y += int(self.speed)
 
         # Check x-axis boundaries
         if self.x > pyxel.width - 8:
@@ -63,15 +70,21 @@ class Player:
             self.scroll_y = self.y
 
     def is_colliding(self) -> bool:
-        x1 = int(self.x // 8)
-        y1 = int(self.y // 8)
-        x2 = int((self.x + 15) // 8)
-        y2 = int((self.y + 15) // 8)
-        for yi in range(y1, y2 + 1):
-            for xi in range(x1, x2 + 1):
-                if pyxel.tilemaps[0].pget(xi, yi) == (0, 1):
+        for xi in range(self.x, self.x + 16, 4):
+            for yi in range(self.y, self.y + 8, 4):
+                map_type = self.map.tile_type(*self.map.get_tile_at_xy(xi, yi))
+                if map_type == self.map.BAD and pyxel.pget(xi, yi) != pyxel.COLOR_WHITE:
                     self.speed = 0
-                    self.state = 'dead'
+                    self.dead = True
+                elif map_type == self.map.ICE:
+                    self.speed = 3
+                    self.speedx = 3
+                    self.friction = 0
+                else:
+                    self.speedx = max(1, self.speedx - .003)
+                    self.speed = max(1, self.speed - .003)
+                    self.friction = min(.3, self.friction + .001)
+
         return False
 
     def update(self) -> None:
@@ -80,7 +93,7 @@ class Player:
 
         :return:
         """
-        if self.state != 'dead':
+        if not self.dead:
             inputs = self.input.update()
             self.movement(inputs)
             self.is_colliding()
@@ -92,4 +105,4 @@ class Player:
         :return:
         """
         pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16 * self.d, 9, 0)
-        # pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
+        pyxel.text(self.x - 10, self.y - self.scroll_y - 10, f"({self.x},{self.y})", 0)
