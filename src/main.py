@@ -15,6 +15,7 @@ class App:
     def __init__(self) -> None:
         pyxel.init(120, 160, title=self.TITLE, fps=self.FPS)
         pyxel.load("../Assets/tube.pyxres")
+        pyxel.mouse(True)
         self.input = Input()
         self.map = Map()
         self.player = Player(self.input, self.map)
@@ -28,14 +29,18 @@ class App:
 
         :return:
         """
-        if self.playing:
+
+        if not self.playing:
+            if self.input.update():
+                self.playing = True
+                self.player.reset()
+        elif not self.player.dead: 
             self.player.update()
-            if self.player.dead:
-                self.playing = False
             self.map.update(int(self.player.scroll_y))
-        elif self.input.update():
-            self.playing = True
-            self.player.reset()
+        elif self.player.y - self.player.SCROLL_BORDER_Y - 1000 < pyxel.height:
+            self.player.fall()
+        else:
+            self.playing = False
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
@@ -46,8 +51,11 @@ class App:
 
         :return:
         """
-
         pyxel.cls(7)
-        self.map.draw()
-        self.hud.draw()
-        self.player.draw()
+        if self.playing:
+            self.map.draw()
+            self.hud.draw_main()
+            self.player.draw()
+        elif self.hud.draw_menu():
+            self.playing = True
+            self.player.reset()

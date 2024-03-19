@@ -34,7 +34,7 @@ class Map:
     def get_tile_at_xy(self, x, y) -> (int, int):
         """
         return reference tile at location (x, y) in game world coords
-        
+
         :param x: world x-coordinate
         :param y: world y-coordinate
         :return: (tilex, tiley): x,y coordinate (in tilesheet) at this location
@@ -43,20 +43,19 @@ class Map:
         yscreen = y - self.scroll_y
         if yscreen < border:
             tilex, tiley = pyxel.tilemaps[0].pget(self.map_top[0]*16+(x // 8),
-                self.map_top[1]*24+((yscreen+(self.scroll_y % 160)) // 8))
+                                                  self.map_top[1]*24+((yscreen+(self.scroll_y % 160)) // 8))
         else:
             tilex, tiley = pyxel.tilemaps[0].pget(self.map_bottom[0]*16+(x // 8),
-                self.map_bottom[1]*24+((yscreen-border) // 8))
-        
+                                                  self.map_bottom[1]*24+((yscreen-border) // 8))
+
         return (tilex, tiley)
 
     def tile_type(self, tilex, tiley) -> int:
         if (tiley < 9 and tilex > 5) or (tiley < 4 and tilex > 2):
-            return self.BAD 
+            return self.BAD
         if (3 < tiley < 7 and tilex < 6) or (1 < tiley < 4 and tilex < 4):
             return self.ICE
         return self.SNOW
-        
 
     def draw(self) -> None:
         """
@@ -70,4 +69,3 @@ class Map:
                 pyxel.blt(x * 8, y * 8 - self.scroll_y % pyxel.height, 0, tilex * 8, tiley * 8, 8, 8, 0)
                 tilex, tiley = pyxel.tilemaps[0].pget(self.map_bottom[0] * 16 + x, self.map_bottom[1] * 24 + y)
                 pyxel.blt(x * 8, y * 8 + pyxel.height - self.scroll_y % pyxel.height, 0, tilex * 8, tiley * 8, 8, 8, 0)
-
