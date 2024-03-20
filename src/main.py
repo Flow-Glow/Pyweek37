@@ -5,6 +5,7 @@ from .input import Input
 from .map import Map
 from .player import Player
 from .sfx import Sfx
+from .progression import Progression
 
 
 class App:
@@ -22,7 +23,10 @@ class App:
         self.map = Map()
         self.sfx = Sfx()
         self.player = Player(self.input, self.map)
-        self.hud = Hud(self.player)
+        self.progress = Progression(self.player)
+        self.hud = Hud(self.player, self.progress)
+        self.player.progress = self.map.progress = self.progress
+        self.map.player = self.player
         self.playing = False
         pyxel.run(self.update, self.draw)
 
@@ -34,8 +38,9 @@ class App:
         """
         if self.playing:
             self.player.update()
+            self.progress.update()
             self.map.update(int(self.player.scroll_y))
-            self.sfx.update_ground_sound(*self.map.get_tile_at_xy(int(self.player.x + 8), int(self.player.y)))
+            self.sfx.update_ground_sound(self.player.tile_type)
         elif self.input.update():
             self.playing = True
 

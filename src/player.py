@@ -23,7 +23,7 @@ class Player:
         self.dead = False
         self.max_time_on_rock = 60
         self.fall_speed = 5
-        self.score = 0
+        self.tile_type = Map.SNOW
 
     def reset(self) -> None:
         """Reset the player."""
@@ -38,9 +38,8 @@ class Player:
         self.scroll_y = 0
         self.SCROLL_BORDER_Y = pyxel.height // 3
         self.dead = False
-        self.time_on_rock = 0
         self.fall_speed = 5
-        self.score = 0
+        self.tile_type = Map.SNOW
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -51,17 +50,22 @@ class Player:
         """
         # Move left or right
         if Input.LEFT in inputs:
-            self.dx = max(float(self.dx - self.speed_x / 3.0), float(-self.speed_x))
+            self.dx = max(float(self.dx - self.progress.max_speed_x / 3.0), float(-self.progress.max_speed_x))
         elif self.dx < 0:
             self.dx = min(0.0, float(self.dx + self.friction))
         if Input.RIGHT in inputs:
-            self.dx = min(float(self.dx + self.speed_x / 3.0), float(self.speed_x))
+            self.dx = min(float(self.dx + self.progress.max_speed_x / 3.0), float(self.progress.max_speed_x))
         elif self.dx > 0:
             self.dx = max(0.0, float(self.dx - self.friction))
+        if Input.DOWN in inputs:
+            self.speed_y = min(self.progress.max_speed_y, self.speed_y + self.progress.max_speed_y / 10)
+            self.progress.max_speed_y += .001
+        if Input.UP in inputs and self.tile_type != Map.BAD:
+            self.speed_y = max(self.progress.max_speed_y * .6, self.speed_y - self.progress.max_speed_y / 90)
 
         # set direction player is facing
         if self.dx:
-            self.d = pyxel.sgn(self.dx)
+            self.direction = pyxel.sgn(self.dx)
 
         # Update position
         self.x += self.dx
@@ -83,14 +87,21 @@ class Player:
 
     def collision(self, tilex: int, tiley: int) -> None:
         """Check for collision."""
-        t_type = self.map.tile_type(tilex, tiley)
-        if t_type == self.map.BAD:
-            self.dead = True
+        self.tile_type = self.map.tile_type(tilex, tiley)
+        if self.tile_type == self.map.BAD:
+            self.speed_y = self.progress.max_speed_y / 40
+            self.speed_x = self.progress.max_speed_x / 40
+            self.progress.max_speed_y -= .01
         # make it s l i p p e r y
-        if t_type == self.map.ICE:
-            self.speed_y = float(min(3.0, self.speed_y + .1))
+        elif self.tile_type == self.map.ICE:
+            self.speed_y = float(min(3.2, self.speed_y + .15))
             self.speed_x = float(min(2.0, self.speed_x + .05))
-            self.friction = float(max(0.0, self.friction - .05))
+            self.friction = float(max(0.0, self.friction - .1))
+
+        else:
+            self.speed_y = float(max(self.progress.max_speed_y * .6, self.speed_y - .005))
+            self.speed_x = float(max(self.speed_x, self.speed_x - .01))
+            self.friction = float(min(0.3, self.friction + .001))
 
     def update(self) -> None:
         """Update the player."""
@@ -101,12 +112,12 @@ class Player:
             if 3 in self.input.update():
                 self.reset()
         inputs = self.input.update()
-        self.prev_y = self.y % 20
+        self.prev_y = self.y
         self.movement(inputs)
         tilex, tiley = self.map.get_tile_at_xy(self.x + 8, self.y)
         self.collision(tilex, tiley)
-        if self.y % 20 < self.prev_y:
-            self.score += 1
+        if self.y < self.map.avalanche_y:
+            self.dead = True
 
     def draw(self) -> None:
         """Draw the player."""

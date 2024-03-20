@@ -10,7 +10,8 @@ class Map:
 
     def __init__(self) -> None:
         self.MAP_TRANSITIONS = 2
-        self.scroll_y = 0
+        self.scroll_y = -20
+        self.avalanche_y = -20
         self.map_top = (0, 0)
         self.map_bottom = (0, 1)
 
@@ -21,6 +22,8 @@ class Map:
         :param scroll_y: The player's y scroll
         :return:
         """
+        self.avalanche_y += self.progress.speed_avalanche
+        self.avalanche_y = max(self.avalanche_y, scroll_y - 20)
         # generate new levels if required
         if scroll_y % 160 < self.scroll_y % 160:
             # the y of the map determines the x of the next one
@@ -42,6 +45,8 @@ class Map:
         """
         border = 160 - (self.scroll_y % 160)
         yscreen = y - self.scroll_y
+        if y < self.avalanche_y:
+            return (6, 8)
         if yscreen < border:
             tilex, tiley = pyxel.tilemaps[0].pget(self.map_top[0]*16+(x // 8),
                                                   self.map_top[1]*24+((yscreen+(self.scroll_y % 160)) // 8))
@@ -77,3 +82,9 @@ class Map:
                 pyxel.blt(x * 8, y * 8 - self.scroll_y % pyxel.height, 0, tilex * 8, tiley * 8, 8, 8, 0)
                 tilex, tiley = pyxel.tilemaps[0].pget(self.map_bottom[0] * 16 + x, self.map_bottom[1] * 24 + y)
                 pyxel.blt(x * 8, y * 8 + pyxel.height - self.scroll_y % pyxel.height, 0, tilex * 8, tiley * 8, 8, 8, 0)
+
+        if self.scroll_y - 8 < self.avalanche_y:
+            for x in range(15):
+                pyxel.blt(x*8, self.avalanche_y - self.scroll_y,
+                              0, 56, 56, 8, 8, 0)
+            pyxel.rect(0, 0, 120, self.avalanche_y - self.scroll_y, pyxel.COLOR_BROWN)
