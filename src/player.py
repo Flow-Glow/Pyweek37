@@ -49,19 +49,20 @@ class Player:
         :return: none
         """
         # Move left or right
-        if Input.LEFT in inputs:
+        mousedown = pyxel.btn(pyxel.MOUSE_BUTTON_LEFT)
+        if Input.LEFT in inputs or (mousedown and self.x - pyxel.mouse_x > 2):
             self.dx = max(float(self.dx - self.friction * 2), float(-self.progress.max_speed_x))
         elif self.dx < 0:
             self.dx = min(0.0, float(self.dx + self.friction))
-        if Input.RIGHT in inputs:
+        if Input.RIGHT in inputs or (mousedown and pyxel.mouse_x - self.x > 2):
             self.dx = min(float(self.dx + self.friction * 2), float(self.progress.max_speed_x))
-        elif self.dx > 0:
+        elif self.dx > 0 or (mousedown and pyxel.mouse_y > self.scroll_y + self.y):
             self.dx = max(0.0, float(self.dx - self.friction))
-        if Input.DOWN in inputs:
+        if Input.DOWN in inputs or (mousedown and pyxel.mouse_y > self.y - self.scroll_y):
             self.speed_y = min(self.progress.max_speed_y, 
                                self.speed_y + self.progress.max_speed_y / 100)
             self.progress.max_speed_y += .001
-        if Input.UP in inputs and self.tile_type != Map.BAD:
+        if Input.UP in inputs or (mousedown and pyxel.mouse_y < self.y - self.scroll_y):
             self.speed_y = max(0.8,
                                self.speed_y - self.progress.max_speed_y / 100)
         # set direction player is facing
@@ -104,8 +105,6 @@ class Player:
             self.speed_y = float(max(self.progress.max_speed_y * .6, self.speed_y - .005))
             self.speed_x = float(max(self.speed_x, self.speed_x - .01))
             self.friction = float(min(self.progress.max_speed_x / 5, self.friction + .001))
-
-        print(self.friction)
 
     def update(self) -> None:
         """Update the player."""

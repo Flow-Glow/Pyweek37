@@ -38,5 +38,4 @@ class Hud:
             pyxel.blt((pyxel.width - len(score) * 16) / 2 + (n * 16), 60,
                       1, int(x) * 16, 48, 16, 16, 0)
         pyxel.blt(28, 90, 1, 0, 32, 64, 16, 0)
-        pyxel.circ(pyxel.mouse_x, pyxel.mouse_y, 1, pyxel.COLOR_GRAY)
         return False

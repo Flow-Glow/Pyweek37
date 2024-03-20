@@ -70,3 +70,4 @@ class App:
             self.player.draw()
         else:
             self.playing = self.hud.draw_menu()
+        pyxel.circ(pyxel.mouse_x, pyxel.mouse_y, 1, pyxel.COLOR_PURPLE)
