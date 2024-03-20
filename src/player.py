@@ -50,19 +50,20 @@ class Player:
         """
         # Move left or right
         if Input.LEFT in inputs:
-            self.dx = max(float(self.dx - self.progress.max_speed_x / 3.0), float(-self.progress.max_speed_x))
+            self.dx = max(float(self.dx - self.friction * 2), float(-self.progress.max_speed_x))
         elif self.dx < 0:
             self.dx = min(0.0, float(self.dx + self.friction))
         if Input.RIGHT in inputs:
-            self.dx = min(float(self.dx + self.progress.max_speed_x / 3.0), float(self.progress.max_speed_x))
+            self.dx = min(float(self.dx + self.friction * 2), float(self.progress.max_speed_x))
         elif self.dx > 0:
             self.dx = max(0.0, float(self.dx - self.friction))
         if Input.DOWN in inputs:
-            self.speed_y = min(self.progress.max_speed_y, self.speed_y + self.progress.max_speed_y / 10)
+            self.speed_y = min(self.progress.max_speed_y, 
+                               self.speed_y + self.progress.max_speed_y / 100)
             self.progress.max_speed_y += .001
         if Input.UP in inputs and self.tile_type != Map.BAD:
-            self.speed_y = max(self.progress.max_speed_y * .6, self.speed_y - self.progress.max_speed_y / 90)
-
+            self.speed_y = max(0.8,
+                               self.speed_y - self.progress.max_speed_y / 100)
         # set direction player is facing
         if self.dx:
             self.direction = pyxel.sgn(self.dx)
@@ -89,28 +90,30 @@ class Player:
         """Check for collision."""
         self.tile_type = self.map.tile_type(tilex, tiley)
         if self.tile_type == self.map.BAD:
-            self.speed_y = self.progress.max_speed_y / 40
-            self.speed_x = self.progress.max_speed_x / 40
-            self.progress.max_speed_y -= .01
+            self.speed_y = self.progress.max_speed_y / 2.5
+            self.speed_x = self.progress.max_speed_x / 5
+            self.progress.max_speed_y -= .005
         # make it s l i p p e r y
         elif self.tile_type == self.map.ICE:
-            self.speed_y = float(min(3.2, self.speed_y + .15))
-            self.speed_x = float(min(2.0, self.speed_x + .05))
-            self.friction = float(max(0.0, self.friction - .1))
+            self.speed_y = float(min(self.progress.max_speed_y * 1.5, self.speed_y + .15))
+            self.speed_x = float(min(self.progress.max_speed_x * .2, self.speed_x + .05))
+            self.friction = float(max(0.05, self.friction - .05))
 
-        else:
+        elif (self.speed_y > self.progress.max_speed_y or self.speed_x > self.progress.max_speed_x
+              or self.friction < self.progress.max_speed_x / 5):
             self.speed_y = float(max(self.progress.max_speed_y * .6, self.speed_y - .005))
             self.speed_x = float(max(self.speed_x, self.speed_x - .01))
-            self.friction = float(min(0.3, self.friction + .001))
+            self.friction = float(min(self.progress.max_speed_x / 5, self.friction + .001))
+
+        print(self.friction)
 
     def update(self) -> None:
         """Update the player."""
         if self.dead:
-            self.speed_x = 0
-            self.speed_y = 0
-            self.dx = 0
-            if 3 in self.input.update():
-                self.reset()
+            if self.fall_speed >= -10:
+                self.y -= self.fall_speed
+                self.fall_speed -= .3
+            return
         inputs = self.input.update()
         self.prev_y = self.y
         self.movement(inputs)

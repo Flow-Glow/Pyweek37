@@ -7,9 +7,9 @@ class Map:
     SNOW = 0
     BAD = 1
     ICE = 2
+    MAP_TRANSITIONS = 2
 
     def __init__(self) -> None:
-        self.MAP_TRANSITIONS = 2
         self.scroll_y = -20
         self.avalanche_y = -20
         self.map_top = (0, 0)
@@ -84,7 +84,6 @@ class Map:
                 pyxel.blt(x * 8, y * 8 + pyxel.height - self.scroll_y % pyxel.height, 0, tilex * 8, tiley * 8, 8, 8, 0)
 
         if self.scroll_y - 8 < self.avalanche_y:
-            for x in range(15):
-                pyxel.blt(x*8, self.avalanche_y - self.scroll_y,
-                              0, 56, 56, 8, 8, 0)
-            pyxel.rect(0, 0, 120, self.avalanche_y - self.scroll_y, pyxel.COLOR_BROWN)
+            pyxel.blt(0, self.avalanche_y - self.scroll_y - 16,
+                    0, 0, 72, 120, 16, 0)
+            pyxel.rect(0, 0, 120, self.avalanche_y - self.scroll_y - 16, pyxel.COLOR_BROWN)

@@ -38,11 +38,21 @@ class App:
         """
         if self.playing:
             self.player.update()
-            self.progress.update()
-            self.map.update(int(self.player.scroll_y))
-            self.sfx.update_ground_sound(self.player.tile_type)
-        elif self.input.update():
-            self.playing = True
+            if not self.player.dead:
+                self.progress.update()
+                self.map.update(int(self.player.scroll_y))
+                self.sfx.update_ground_sound(self.player.tile_type)
+            else:
+                self.sfx.update_ground_sound(0)
+        if not self.playing or self.player.dead:
+            inputs = self.input.update()
+            if Input.CONFIRM in inputs:
+                self.playing = True
+                self.player.reset()
+                self.map.__init__()
+                self.progress.reset()
+            elif Input.CANCEL in inputs:
+                self.playing = False
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
