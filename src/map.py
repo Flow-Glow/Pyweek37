@@ -3,6 +3,7 @@ import pyxel
 
 class Map:
     """Map Class"""
+
     SNOW = 0
     BAD = 1
     ICE = 2
@@ -31,10 +32,10 @@ class Map:
         # set scroll y for drawing
         self.scroll_y = scroll_y
 
-    def get_tile_at_xy(self, x, y) -> (int, int):
+    def get_tile_at_xy(self, x: int, y: int) -> tuple[int, int]:
         """
-        return reference tile at location (x, y) in game world coords
-        
+        Return reference tile at location (x, y) in game world coords
+
         :param x: world x-coordinate
         :param y: world y-coordinate
         :return: (tilex, tiley): x,y coordinate (in tilesheet) at this location
@@ -48,9 +49,16 @@ class Map:
             tilex, tiley = pyxel.tilemaps[0].pget(self.map_bottom[0]*16+(x // 8),
                                                   self.map_bottom[1]*24+((yscreen-border) // 8))
 
-        return (tilex, tiley)
+        return tilex, tiley
 
-    def tile_type(self, tilex, tiley) -> int:
+    def tile_type(self, tilex: int, tiley: int) -> int:
+        """
+        Return type of tile at location (tilex, tiley) in tilesheet
+
+        :param tilex: the x coordinate of the tile
+        :param tiley: the y coordinate of the tile
+        :return: the type of tile
+        """
         if (tiley < 9 and tilex > 5) or (tiley < 4 and tilex > 2):
             return self.BAD
         if (3 < tiley < 7 and tilex < 6) or (1 < tiley < 4 and tilex < 4):
