@@ -2,11 +2,13 @@ import pyxel
 
 from .input import Input
 from .map import Map
-
+from .snowball import Snowballs
 
 class Player:
     """Player class."""
-
+    
+    SHOT_TIMEOUT = 20
+    
     def __init__(self, inputs: Input, maps: Map) -> None:
         self.input = inputs
         self.map = maps
@@ -24,6 +26,8 @@ class Player:
         self.max_time_on_rock = 60
         self.fall_speed = 5
         self.score = 0
+        self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=10, N=20)
+        self.fire_timeout = 0 # for limiting player snowball fire rate
 
     def reset(self) -> None:
         """Reset the player."""
@@ -41,6 +45,7 @@ class Player:
         self.time_on_rock = 0
         self.fall_speed = 5
         self.score = 0
+        self.fire_timeout = 0
 
     def movement(self, inputs: list[int]) -> None:
         """
@@ -80,7 +85,12 @@ class Player:
 
         elif self.y < self.scroll_y:
             self.scroll_y = self.y
-
+    
+    def check_shot(self, inputs: list[int]) -> None:
+        if Input.SHOOT in inputs and self.fire_timeout == 0:
+            self.snowballs.new(self.x, self.y-self.scroll_y, self.x, 160)
+            self.fire_timeout = self.SHOT_TIMEOUT
+    
     def collision(self, tilex: int, tiley: int) -> None:
         """Check for collision."""
         t_type = self.map.tile_type(tilex, tiley)
@@ -94,15 +104,20 @@ class Player:
 
     def update(self) -> None:
         """Update the player."""
+        self.snowballs.update()
         if self.dead:
             return
         inputs = self.input.update()
         self.prev_y = self.y % 20
         self.movement(inputs)
+        self.check_shot(inputs)
         tilex, tiley = self.map.get_tile_at_xy(self.x + 8, self.y)
         self.collision(tilex, tiley)
         if self.y % 20 < self.prev_y:
             self.score += 1
+        
+        if self.fire_timeout > 0:
+            self.fire_timeout -= 1
 
     def draw(self) -> None:
         """Draw the player."""

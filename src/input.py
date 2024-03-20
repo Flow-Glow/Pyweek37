@@ -8,6 +8,7 @@ class Input:
     RIGHT = 2
     CONFIRM = 3
     CANCEL = 4
+    SHOOT = 5
 
     def __init__(self) -> None:
         self.inputs: list[int] = []
@@ -44,5 +45,11 @@ class Input:
                 or pyxel.btn(pyxel.GAMEPAD1_BUTTON_B)
         ):
             self.inputs.append(self.CANCEL)  # 5
+        
+        if (
+                pyxel.btn(pyxel.KEY_SPACE)
+                # add more?
+        ):
+            self.inputs.append(self.SHOOT)  # 5
 
         return self.inputs
