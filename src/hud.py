@@ -15,10 +15,12 @@ class Hud:
 
         :return:
         """
+        pyxel.mouse(False)
         score = str(self.player.score)
         pyxel.text((pyxel.width - pyxel.FONT_WIDTH * len(score)) / 2, 2, score, 0)
         if self.player.dead:
             pyxel.text(42, (pyxel.height - pyxel.FONT_HEIGHT) / 2, "Game Over", 0)
+            pyxel.text(18, 84, "Press 'Z' to restart", 0)
 
     def draw_menu(self) -> bool:
         """

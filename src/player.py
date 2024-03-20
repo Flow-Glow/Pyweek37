@@ -95,7 +95,11 @@ class Player:
     def update(self) -> None:
         """Update the player."""
         if self.dead:
-            return
+            self.speed_x = 0
+            self.speed_y = 0
+            self.dx = 0
+            if 3 in self.input.update():
+                self.reset()
         inputs = self.input.update()
         self.prev_y = self.y % 20
         self.movement(inputs)
