@@ -7,7 +7,7 @@ class Map:
     SNOW = 0
     BAD = 1
     ICE = 2
-    MAP_TRANSITIONS = 2
+    MAP_TRANSITIONS = 3
 
     def __init__(self) -> None:
         self.scroll_y = -20
@@ -28,7 +28,7 @@ class Map:
         if scroll_y % 160 < self.scroll_y % 160:
             # the y of the map determines the x of the next one
             # this allows to set transitioning nicely
-            transition = self.map_top[1]
+            transition = self.map_bottom[1]
             self.map_top = self.map_bottom
             self.map_bottom = (transition, pyxel.rndi(0, self.MAP_TRANSITIONS - 1))
 
