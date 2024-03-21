@@ -24,8 +24,8 @@ class App:
         self.sfx = Sfx()
         pyxel.playm(1, 0, False)
         self.player = Player(self.input, self.map)
-        self.snow_goblin = SnowGoblin(self.player)
         self.progress = Progression(self.player)
+        self.snow_goblin = SnowGoblin(self.player, self.progress)
         self.hud = Hud(self.player, self.progress)
         self.player.progress = self.map.progress = self.progress
         self.map.player = self.player
@@ -62,7 +62,7 @@ class App:
             self.player.update()
             
             if not self.player.dead:
-                if pyxel.frame_count % 300 == 0 and self.snow_goblin.mode == None:
+                if pyxel.frame_count % self.progress.goblin_rate == 0 and self.snow_goblin.mode == None:
                     self.snow_goblin.launch()
                 self.progress.update()
                 self.map.update(int(self.player.scroll_y))

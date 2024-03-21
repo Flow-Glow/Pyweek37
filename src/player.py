@@ -28,6 +28,7 @@ class Player:
         self.score = 0
         self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=10, N=20)
         self.fire_timeout = 0 # for limiting player snowball fire rate
+        self.fire_delay = 0
         self.tile_type = Map.SNOW
 
     def reset(self) -> None:
@@ -46,6 +47,7 @@ class Player:
         self.fall_speed = 5.3
         self.score = 0
         self.fire_timeout = 0
+        self.fire_delay = -1
         self.tile_type = Map.SNOW
         self.snowballs.reset()
 
@@ -97,8 +99,12 @@ class Player:
     
     def check_shot(self, inputs: list[int]) -> None:
         if Input.SHOOT in inputs and self.fire_timeout == 0:
+            self.fire_delay = 3
+        if self.fire_delay == 0:
             self.snowballs.new(self.x, self.y-self.scroll_y, self.x, 160)
             self.fire_timeout = self.SHOT_TIMEOUT
+        if self.fire_delay >= 0:
+            self.fire_delay -= 1
     
     def collision(self) -> None:
         """Check for collision."""
@@ -144,7 +150,11 @@ class Player:
 
     def draw(self) -> None:
         """Draw the player."""
+        imgx, imgy, imgh = 8, 0, 9
         if self.dead:
-            pyxel.blt(self.x, self.y - self.scroll_y, 0, 0, 56, 16 * self.direction, 16, 0)
-        else:
-            pyxel.blt(self.x, self.y - self.scroll_y, 0, 8, 0, 16 * self.direction, 9, 0)
+            imgx, imgy, imgh = 0, 56, 16
+        elif self.fire_delay > 0:
+            imgx, imgy, imgh = 32, 56, 16
+
+        pyxel.blt(self.x, self.y - self.scroll_y,
+                    0, imgx, imgy, 16 * self.direction, imgh, 0)

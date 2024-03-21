@@ -11,13 +11,11 @@ SCREEN_HEIGHT = 160
 
 class SnowGoblin():
     
-    SPEEDY = 2
-    SPEEDX = 1
     HOVERY = SCREEN_HEIGHT - 24
-    THROW_DELAY = 20
     
-    def __init__(self, player):
+    def __init__(self, player, progress):
         self.player = player # keeps reference to player object to read position
+        self.progress = progress
         self.snowballs = Snowballs(shooter_type='goblin')
         self.reset()
 
@@ -45,11 +43,11 @@ class SnowGoblin():
         if self.mode == None:
             return
         elif self.mode == 'ski':
-            self.y += self.SPEEDY
+            self.y += self.progress.goblin_speedy
             if self.y >= self.target_y:
                 self.y = self.target_y
                 self.mode = 'throw'
-                self.tic = self.THROW_DELAY
+                self.tic = self.progress.goblin_throw_delay
         elif self.mode == 'throw':
             if self.tic == 0:
                 self.snowballs.new(self.x, self.y, self.player.x, self.player.y-self.player.scroll_y)
@@ -57,15 +55,15 @@ class SnowGoblin():
                 self.target_x = pyxel.rndi(16, SCREEN_WIDTH-16)
         elif self.mode == 'move':
             xdist = self.target_x-self.x
-            if xdist > self.SPEEDX:
-                self.x += self.SPEEDX
-            elif xdist < -self.SPEEDX:
-                self.x -= self.SPEEDX
+            if xdist > self.progress.goblin_speedx:
+                self.x += self.progress.goblin_speedx
+            elif xdist < -self.progress.goblin_speedx:
+                self.x -= self.progress.goblin_speedx
             else:
                 self.mode = 'throw'
-                self.tic = self.THROW_DELAY
+                self.tic = self.progress.goblin_throw_delay
         elif self.mode == 'dead':
-            self.y -= self.SPEEDY
+            self.y -= self.progress.goblin_speedy
             if self.y <= 0:
                 self.y = 0
                 self.mode = None
