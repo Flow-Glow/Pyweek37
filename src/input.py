@@ -9,6 +9,8 @@ class Input:
     CONFIRM = 3
     CANCEL = 4
     SHOOT = 5
+    UP = 6
+    DOWN = 7
 
     def __init__(self) -> None:
         self.inputs: list[int] = []
@@ -32,6 +34,19 @@ class Input:
                 or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)  # 3
         ):
             self.inputs.append(self.RIGHT)
+
+        if (
+                pyxel.btn(pyxel.KEY_UP)
+                or pyxel.btn(pyxel.KEY_W)
+                or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)
+        ):
+            self.inputs.append(self.UP)
+        elif (
+                pyxel.btn(pyxel.KEY_DOWN)
+                or pyxel.btn(pyxel.KEY_S)
+                or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)
+        ):
+            self.inputs.append(self.DOWN)
 
         if (
                 pyxel.btn(pyxel.KEY_Z)

@@ -14,6 +14,9 @@ class Snowballs():
         self.SPEED = SPEED
         self.HIT_BOX_SIZE = HIT_BOX_SIZE
         self.N = N
+        self.reset()
+
+    def reset(self):
         self.x = [0 for i in range(self.N)]
         self.y = [0 for i in range(self.N)]
         self.dx = [0 for i in range(self.N)]

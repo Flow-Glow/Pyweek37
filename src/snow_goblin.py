@@ -18,13 +18,17 @@ class SnowGoblin():
     
     def __init__(self, player):
         self.player = player # keeps reference to player object to read position
+        self.snowballs = Snowballs(shooter_type='goblin')
+        self.reset()
+
+    def reset(self):
         self.x = 0
         self.y = 0
         self.target_x = 0
         self.target_y = 0
-        self.snowballs = Snowballs(shooter_type='goblin')
         self.tic = 0
         self.mode = None
+        self.snowballs.reset()
     
     def launch(self):
         self.mode = 'ski'
