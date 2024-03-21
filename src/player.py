@@ -26,7 +26,7 @@ class Player:
         self.max_time_on_rock = 60
         self.fall_speed = 5.3
         self.score = 0
-        self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=10, N=20)
+        self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=16, N=20)
         self.fire_timeout = 0 # for limiting player snowball fire rate
         self.fire_delay = 0
         self.tile_type = Map.SNOW
@@ -37,8 +37,8 @@ class Player:
         self.y = 0
         self.prev_y = 0
         self.speed_x = 1
-        self.speed_y = 1.5
-        self.friction = 0.2
+        self.speed_y = 1
+        self.friction = 0.5
         self.dx = 0
         self.direction = 1
         self.scroll_y = 0

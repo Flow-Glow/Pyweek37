@@ -8,6 +8,10 @@ from .sfx import Sfx
 from .snow_goblin import SnowGoblin
 from .progression import Progression
 
+# 32 56 player with ball
+# 16 56 normal yeti
+# 0 88 yeti yeet ball 20 px
+# 24 88 yeti with ball 18px
 
 class App:
     """Main application class."""
@@ -34,7 +38,8 @@ class App:
     
     def check_snowballs(self):
         player_was_hit = self.snow_goblin.snowballs.check_hit(
-                int(self.player.x + 8), int(self.player.y-self.player.scroll_y))
+                int(self.player.x + 4), 
+                int(self.player.y-self.player.scroll_y+8))
         if player_was_hit:
             self.player.dead = True
         goblin_was_hit = self.player.snowballs.check_hit(

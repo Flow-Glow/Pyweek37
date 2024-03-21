@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 160
 
 class Snowballs():
     
-    def __init__(self, shooter_type='player', SPEED=2, HIT_BOX_SIZE=5, N=5):
+    def __init__(self, shooter_type='player', SPEED=2, HIT_BOX_SIZE=8, N=5):
         self.shooter_type = shooter_type
         self.SPEED = SPEED
         self.HIT_BOX_SIZE = HIT_BOX_SIZE

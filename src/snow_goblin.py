@@ -21,7 +21,7 @@ class SnowGoblin():
 
     def reset(self):
         self.x = 0
-        self.y = 0
+        self.y = -16
         self.target_x = 0
         self.target_y = 0
         self.tic = 0
@@ -33,7 +33,7 @@ class SnowGoblin():
         self.target_x = pyxel.rndi(16, SCREEN_WIDTH-16)
         self.target_y = self.HOVERY
         self.x = self.target_x
-        self.y = 0
+        self.y = -16
     
     def kill(self):
         self.mode = 'dead'
@@ -63,9 +63,9 @@ class SnowGoblin():
                 self.mode = 'throw'
                 self.tic = self.progress.goblin_throw_delay
         elif self.mode == 'dead':
-            self.y -= self.progress.goblin_speedy
-            if self.y <= 0:
-                self.y = 0
+            self.y -= self.player.speed_y
+            if self.y <= -16:
+                self.y = -16
                 self.mode = None
                 
         if self.tic > 0:
@@ -73,10 +73,14 @@ class SnowGoblin():
     
     def draw(self):
         if not self.mode == None:
-            if self.mode == 'dead':
-                pyxel.circ(self.x, self.y, 5, 8)
-            else:
-                pyxel.circ(self.x, self.y, 5, 3)
+            imgx, imgy, imgw = 16, 56, 16
+            if self.mode == 'throw' and self.tic < 10:
+                imgx, imgy, imgw = 24, 88, 18 
+            elif self.mode == 'move':
+                imgx, imgy, imgw = 0, 88, 20
+            pyxel.blt(self.x, self.y, 0, imgx, imgy, imgw,
+                      -16 if self.mode=='dead' else 16, 0)
+
         self.snowballs.draw()
         
         
