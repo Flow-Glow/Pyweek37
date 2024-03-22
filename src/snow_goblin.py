@@ -43,7 +43,7 @@ class SnowGoblin():
         if self.mode == None:
             return
         elif self.mode == 'ski':
-            self.y += self.progress.goblin_speedy
+            self.y += self.progress.enemy_speedy
             if self.y >= self.target_y:
                 self.y = self.target_y
                 self.mode = 'throw'
@@ -55,10 +55,10 @@ class SnowGoblin():
                 self.target_x = pyxel.rndi(16, SCREEN_WIDTH-16)
         elif self.mode == 'move':
             xdist = self.target_x-self.x
-            if xdist > self.progress.goblin_speedx:
-                self.x += self.progress.goblin_speedx
-            elif xdist < -self.progress.goblin_speedx:
-                self.x -= self.progress.goblin_speedx
+            if xdist > self.progress.enemy_speedx:
+                self.x += self.progress.enemy_speedx
+            elif xdist < -self.progress.enemy_speedx:
+                self.x -= self.progress.enemy_speedx
             else:
                 self.mode = 'throw'
                 self.tic = self.progress.goblin_throw_delay
@@ -81,6 +81,4 @@ class SnowGoblin():
             pyxel.blt(self.x, self.y, 0, imgx, imgy, imgw,
                       -16 if self.mode=='dead' else 16, 0)
 
-        self.snowballs.draw()
-        
-        
+        self.snowballs.draw() 

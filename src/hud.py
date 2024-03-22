@@ -7,7 +7,10 @@ class Hud:
     def __init__(self, player, progress) -> None:
         self.player = player
         self.progress = progress
-        self.flyingtubes = [[pyxel.rndi(0,3)*16, pyxel.rndi(0, pyxel.width), pyxel.rndi(0, pyxel.height), pyxel.rndf(-2,2), pyxel.rndf(-2,2)] for i in range(10)]
+        self.flyingtubes = [[pyxel.rndi(0,3)*16, 
+                             pyxel.rndi(0, pyxel.rndi(pyxel.width*-3,pyxel.width*3)), 
+                             pyxel.rndi(pyxel.height*-3,pyxel.height*3), pyxel.rndf(-2,2), 
+                        pyxel.rndf(-2,2)] for i in range(10)]
 
     def draw_main(self) -> None:
         """

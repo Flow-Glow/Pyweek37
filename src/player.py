@@ -12,24 +12,8 @@ class Player:
     def __init__(self, inputs: Input, maps: Map) -> None:
         self.input = inputs
         self.map = maps
-        self.x = pyxel.width // 2
-        self.y = 0
-        self.prev_y = 0
-        self.speed_x = 1
-        self.speed_y = 1
-        self.friction = 0.2
-        self.dx = 0
-        self.direction = 1
-        self.scroll_y = 0
-        self.SCROLL_BORDER_Y = pyxel.height // 3
-        self.dead = False
-        self.max_time_on_rock = 60
-        self.fall_speed = 5.3
-        self.score = 0
         self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=16, N=32)
-        self.fire_timeout = 0 # for limiting player snowball fire rate
-        self.fire_delay = 0
-        self.tile_type = Map.SNOW
+        self.reset()
 
     def reset(self) -> None:
         """Reset the player."""
@@ -68,7 +52,8 @@ class Player:
             self.dx = min(float(self.dx + self.friction * 2), float(self.progress.max_speed_x))
         elif self.dx > 0 or (mousedown and pyxel.mouse_y > self.scroll_y + self.y):
             self.dx = max(0.0, float(self.dx - self.friction))
-        if Input.DOWN in inputs or (mousedown and pyxel.mouse_y > self.y - self.scroll_y):
+        if self.speed_y < self.progress.max_speed_y and (Input.DOWN in inputs or 
+            (mousedown and pyxel.mouse_y > self.y - self.scroll_y)):
             self.speed_y = min(self.progress.max_speed_y, 
                                self.speed_y + .2)
         if Input.UP in inputs or (mousedown and pyxel.mouse_y < self.y - self.scroll_y):

@@ -5,13 +5,9 @@ from .input import Input
 from .map import Map
 from .player import Player
 from .sfx import Sfx
+from .bird import Bird
 from .snow_goblin import SnowGoblin
 from .progression import Progression
-
-# 32 56 player with ball
-# 16 56 normal yeti
-# 0 88 yeti yeet ball 20 px
-# 24 88 yeti with ball 18px
 
 class App:
     """Main application class."""
@@ -30,6 +26,7 @@ class App:
         self.player = Player(self.input, self.map)
         self.progress = Progression(self.player)
         self.snow_goblin = SnowGoblin(self.player, self.progress)
+        self.bird = Bird(self.player, self.progress)
         self.hud = Hud(self.player, self.progress)
         self.player.progress = self.map.progress = self.progress
         self.map.player = self.player
@@ -46,6 +43,12 @@ class App:
                 int(self.snow_goblin.x)+8, int(self.snow_goblin.y)+8)
         if goblin_was_hit:
             self.snow_goblin.kill()
+            self.progress.score += 10
+        bird_was_hit = self.player.snowballs.check_hit(
+                int(self.bird.x)+8, int(self.bird.y)+4)
+        if bird_was_hit:
+            self.bird.mode = self.bird.MODE_DEAD
+            self.progress.score += 20
 
     def play(self):
         pyxel.stop()
@@ -53,6 +56,7 @@ class App:
         self.playing = True
         self.player.reset()
         self.snow_goblin.reset()
+        self.bird.reset()
         self.map.__init__()
         self.progress.reset()
 
@@ -67,24 +71,29 @@ class App:
             self.player.update()
             
             if not self.player.dead:
-                if pyxel.frame_count % self.progress.goblin_rate == 0 and self.snow_goblin.mode == None:
-                    self.snow_goblin.launch()
+                if pyxel.frame_count % self.progress.enemy_rate == 0 and not (self.snow_goblin.mode or self.bird.mode):
+                    if pyxel.rndi(0,1):
+                        self.snow_goblin.launch()
+                    else:
+                        self.bird.launch()
                 self.progress.update()
                 self.map.update(int(self.player.scroll_y))
                 self.sfx.update_ground_sound(self.player.tile_type)
                 self.snow_goblin.update()
+                self.bird.update()
                 self.check_snowballs()
 
             elif self.player.fall_speed == 5:
                 pyxel.stop()
-                pyxel.playm(1, 0, False)  # start title music
-                self.sfx.update_ground_sound(0)
+                self.sfx.pop_tube()
         
         if not self.playing or self.player.dead:
             inputs = self.input.update()
             if Input.CONFIRM in inputs:
                 self.play()
-            elif Input.CANCEL in inputs:
+            elif Input.CANCEL in inputs and self.playing:
+                pyxel.stop()
+                pyxel.playm(1, 0, False)
                 self.playing = False
                 self.dead = False
 
@@ -100,10 +109,11 @@ class App:
         pyxel.cls(7)
         if self.playing:
             self.map.draw()
-            self.hud.draw_main()
             self.player.draw()
             self.player.snowballs.draw()
             self.snow_goblin.draw()
+            self.bird.draw()
+            self.hud.draw_main()
         elif self.hud.draw_menu():
             self.play()
             self.playing = True

@@ -13,9 +13,9 @@ class Progression:
         self.max_speed_x = 1
         self.max_speed_y = 1.2
         self.speed_avalanche = 1
-        self.goblin_rate = 300
-        self.goblin_speedx = .5
-        self.goblin_speedy = 1.5
+        self.enemy_rate = 300
+        self.enemy_speedx = .5
+        self.enemy_speedy = 1.5
         self.goblin_throw_delay = 120
         self.score = 0
     
@@ -24,9 +24,9 @@ class Progression:
             self.score += 1
             
         if pyxel.frame_count % 120 == 0:
-            self.goblin_rate = max(1, self.goblin_rate - 10)
-            self.goblin_speedx += .05
-            self.goblin_speedy += .05
+            self.enemy_rate = max(1, self.enemy_rate - 10)
+            self.enemy_speedx += .05
+            self.enemy_speedy += .05
             if self.score%20==0:
                 self.goblin_throw_delay = max(1, self.goblin_throw_delay - 1)
             self.max_speed_x += .05
