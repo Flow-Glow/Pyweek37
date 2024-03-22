@@ -38,12 +38,12 @@ class App:
     
     def check_snowballs(self):
         player_was_hit = self.snow_goblin.snowballs.check_hit(
-                int(self.player.x + 4), 
-                int(self.player.y-self.player.scroll_y+8))
+                int(self.player.x+8), 
+                int(self.player.y-self.player.scroll_y+4))
         if player_was_hit:
             self.player.dead = True
         goblin_was_hit = self.player.snowballs.check_hit(
-                int(self.snow_goblin.x), int(self.snow_goblin.y))
+                int(self.snow_goblin.x)+8, int(self.snow_goblin.y)+8)
         if goblin_was_hit:
             self.snow_goblin.kill()
 

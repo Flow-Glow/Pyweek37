@@ -75,9 +75,9 @@ class SnowGoblin():
         if not self.mode == None:
             imgx, imgy, imgw = 16, 56, 16
             if self.mode == 'throw' and self.tic < 10:
-                imgx, imgy, imgw = 24, 88, 18 
+                imgx, imgy, imgw = 30, 97, 20 
             elif self.mode == 'move':
-                imgx, imgy, imgw = 0, 88, 20
+                imgx, imgy, imgw = 5, 96, 20
             pyxel.blt(self.x, self.y, 0, imgx, imgy, imgw,
                       -16 if self.mode=='dead' else 16, 0)
 

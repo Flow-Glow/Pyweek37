@@ -7,7 +7,7 @@ class Map:
     SNOW = 0
     BAD = 1
     ICE = 2
-    MAP_TRANSITIONS = 3
+    MAP_TRANSITIONS = 4
 
     def __init__(self) -> None:
         self.scroll_y = 0

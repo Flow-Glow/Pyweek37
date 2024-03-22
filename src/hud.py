@@ -7,6 +7,7 @@ class Hud:
     def __init__(self, player, progress) -> None:
         self.player = player
         self.progress = progress
+        self.flyingtubes = [[pyxel.rndi(0,3)*16, pyxel.rndi(0, pyxel.width), pyxel.rndi(0, pyxel.height), pyxel.rndf(-2,2), pyxel.rndf(-2,2)] for i in range(10)]
 
     def draw_main(self) -> None:
         """
@@ -31,6 +32,10 @@ class Hud:
         if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and (28 < pyxel.mouse_x < 92
                                                     and 90 < pyxel.mouse_y < 106):
             return True
+        for n,(t,x,y,i,j) in enumerate(self.flyingtubes):
+            self.flyingtubes[n][1] = (x+i)%(32+pyxel.width)
+            self.flyingtubes[n][2] = (y+j)%(pyxel.height+32)
+            pyxel.blt(x-16, y-16, 1, t, 64, 16, 16, 0)
 
         pyxel.blt(12, 12, 1, 0, 0, 96, 32, 0)
         score = str(self.progress.score)

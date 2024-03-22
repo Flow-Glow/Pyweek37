@@ -26,7 +26,7 @@ class Player:
         self.max_time_on_rock = 60
         self.fall_speed = 5.3
         self.score = 0
-        self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=16, N=20)
+        self.snowballs = Snowballs(shooter_type='player', SPEED=4, HIT_BOX_SIZE=16, N=32)
         self.fire_timeout = 0 # for limiting player snowball fire rate
         self.fire_delay = 0
         self.tile_type = Map.SNOW
@@ -70,11 +70,10 @@ class Player:
             self.dx = max(0.0, float(self.dx - self.friction))
         if Input.DOWN in inputs or (mousedown and pyxel.mouse_y > self.y - self.scroll_y):
             self.speed_y = min(self.progress.max_speed_y, 
-                               self.speed_y + self.progress.max_speed_y / 100)
-            self.progress.max_speed_y += .001
+                               self.speed_y + .2)
         if Input.UP in inputs or (mousedown and pyxel.mouse_y < self.y - self.scroll_y):
             self.speed_y = max(0.8,
-                               self.speed_y - self.progress.max_speed_y / 100)
+                               self.speed_y - .2)
         # set direction player is facing
         if self.dx:
             self.direction = pyxel.sgn(self.dx)
@@ -114,7 +113,7 @@ class Player:
             self.progress.max_speed_y -= .005
         # make it s l i p p e r y
         elif self.tile_type == self.map.ICE:
-            self.speed_y = float(min(self.progress.max_speed_y * 1.5, self.speed_y + .15))
+            self.speed_y = float(min(self.progress.max_speed_y * 2, self.speed_y + .2))
             self.speed_x = float(min(self.progress.max_speed_x * .2, self.speed_x + .05))
             self.friction = float(max(0.01, self.friction - .07))
 
