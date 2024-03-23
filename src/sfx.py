@@ -2,6 +2,7 @@ import pyxel
 
 from .map import Map
 
+
 class Sfx:
     """Sfx: manages sound effects on dedicated audio channel"""
 

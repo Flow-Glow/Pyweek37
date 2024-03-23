@@ -4,11 +4,12 @@ from .input import Input
 from .map import Map
 from .snowball import Snowballs
 
+
 class Player:
     """Player class."""
-    
+
     SHOT_TIMEOUT = 20
-    
+
     def __init__(self, inputs: Input, maps: Map) -> None:
         self.input = inputs
         self.map = maps
@@ -33,6 +34,7 @@ class Player:
         self.fire_timeout = 0
         self.fire_delay = -1
         self.tile_type = Map.SNOW
+        self.powerup = False
         self.snowballs.reset()
 
     def movement(self, inputs: list[int]) -> None:
@@ -52,9 +54,9 @@ class Player:
             self.dx = min(float(self.dx + self.friction * 2), float(self.progress.max_speed_x))
         elif self.dx > 0 or (mousedown and pyxel.mouse_y > self.scroll_y + self.y):
             self.dx = max(0.0, float(self.dx - self.friction))
-        if self.speed_y < self.progress.max_speed_y and (Input.DOWN in inputs or 
-            (mousedown and pyxel.mouse_y > self.y - self.scroll_y)):
-            self.speed_y = min(self.progress.max_speed_y, 
+        if self.speed_y < self.progress.max_speed_y and (Input.DOWN in inputs or
+                                                         (mousedown and pyxel.mouse_y > self.y - self.scroll_y)):
+            self.speed_y = min(self.progress.max_speed_y,
                                self.speed_y + .2)
         if Input.UP in inputs or (mousedown and pyxel.mouse_y < self.y - self.scroll_y):
             self.speed_y = max(0.8,
@@ -80,16 +82,16 @@ class Player:
 
         elif self.y < self.scroll_y:
             self.scroll_y = self.y
-    
+
     def check_shot(self, inputs: list[int]) -> None:
         if Input.SHOOT in inputs and self.fire_timeout == 0:
             self.fire_delay = 3
         if self.fire_delay == 0:
-            self.snowballs.new(self.x, self.y-self.scroll_y, self.x, 160)
+            self.snowballs.new(self.x, self.y - self.scroll_y, self.x, 160)
             self.fire_timeout = self.SHOT_TIMEOUT
         if self.fire_delay >= 0:
             self.fire_delay -= 1
-    
+
     def collision(self) -> None:
         """Check for collision."""
         if self.tile_type == self.map.BAD:
@@ -109,7 +111,7 @@ class Player:
             self.friction = float(min(self.progress.max_speed_x / 3, self.friction + .001))
 
     def update(self) -> None:
-        """Update the player.""" 
+        """Update the player."""
         if self.dead:
             with open('score.txt', 'r+') as f:
                 try:
@@ -131,14 +133,15 @@ class Player:
         self.check_shot(inputs)
         self.tile_type = 0
         for xi in range(0, 16, 4):
-            self.tile_type = max(self.tile_type, 
+            self.tile_type = max(self.tile_type,
                                  self.map.get_tile_at_xy(self.x + xi, self.y))
         self.collision()
-        
+
         if self.fire_timeout > 0:
             self.fire_timeout -= 1
         if self.y < self.map.avalanche_y:
             self.dead = True
+
 
     def draw(self) -> None:
         """Draw the player."""
@@ -149,4 +152,4 @@ class Player:
             imgx, imgy, imgh = 32, 56, 16
 
         pyxel.blt(self.x, self.y - self.scroll_y,
-                    0, imgx, imgy, 16 * self.direction, imgh, 0)
+                  0, imgx, imgy, 16 * self.direction, imgh, 0)

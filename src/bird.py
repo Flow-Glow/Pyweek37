@@ -1,5 +1,6 @@
 import pyxel
 
+
 class Bird:
     """
     enemy that flies and tries to swoop player
@@ -8,7 +9,7 @@ class Bird:
     MODE_DOWN = 1
     MODE_UP = 2
     MODE_ABOVE = 3
-    MODE_DEAD = 5 
+    MODE_DEAD = 5
 
     def __init__(self, player, progress):
         self.player = player
@@ -57,21 +58,23 @@ class Bird:
                 self.y -= self.fall
             else:
                 self.mode = self.MODE_RESPAWNING
-        dx, dy = self.x-self.player.x, self.y-self.player.y+self.player.scroll_y
-        check_x = dx < 16 and dx > -16
-        check_y = dy < 8 and dy > -8
-        if (check_x and check_y):
-            self.player.dead = True
-        
+        dx, dy = self.x - self.player.x, self.y - self.player.y + self.player.scroll_y
+        check_x = 16 > dx > -16
+        check_y = 8 > dy > -8
+        if check_x and check_y and self.mode != self.MODE_DEAD:
+            if self.player.powerup :
+                print("bird hit player")
+                self.player.powerup = False
+                self.mode = self.MODE_DEAD
+            else:
+                self.player.dead = True
+
         if self.x > self.target_x:
             self.x = max(self.target_x, self.x - max(abs(self.target_x - self.x) / 60, .1))
         elif self.x < self.target_x:
             self.x = min(self.target_x, self.x + max(abs(self.x - self.target_x) / 60, .1))
 
-
     def draw(self):
         if self.mode:
-            pyxel.blt(self.x, self.y, 0, 16*(self.mode==self.MODE_DEAD), 
-                      112+8*(pyxel.frame_count%30<15), 16, 8, 0)
-
-
+            pyxel.blt(self.x, self.y, 0, 16 * (self.mode == self.MODE_DEAD),
+                      112 + 8 * (pyxel.frame_count % 30 < 15), 16, 8, 0)
