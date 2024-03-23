@@ -51,8 +51,8 @@ class App:
             self.progress.score += 25
 
     def play(self):
-        pyxel.stop()
-        pyxel.playm(0, 0, True)  # start main music
+        #pyxel.stop()
+        #pyxel.playm(0, 0, True)  # start main music
         self.playing = True
         self.player.reset()
         self.snow_goblin.reset()
@@ -84,7 +84,7 @@ class App:
                 self.check_snowballs()
 
             elif self.player.fall_speed == 5:
-                pyxel.stop()
+                #pyxel.stop()
                 self.sfx.pop_tube()
         
         if not self.playing or self.player.dead:
@@ -115,6 +115,7 @@ class App:
             self.bird.draw()
             self.hud.draw_main()
         elif self.hud.draw_menu():
+            pyxel.playm(0, 0, True)  # start main music
             self.play()
             self.playing = True
 
