@@ -111,6 +111,14 @@ class Player:
     def update(self) -> None:
         """Update the player.""" 
         if self.dead:
+            with open('score.txt', 'r+') as f:
+                try:
+                    highscore = int(f.read())
+                except ValueError:
+                    f.write('0')
+                if self.progress.score > highscore:
+                    f.seek(0)
+                    f.write(str(self.progress.score))
             if self.fall_speed >= -10:
                 self.y -= self.fall_speed
                 self.fall_speed -= .3

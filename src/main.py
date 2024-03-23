@@ -43,12 +43,12 @@ class App:
                 int(self.snow_goblin.x)+8, int(self.snow_goblin.y)+8)
         if goblin_was_hit:
             self.snow_goblin.kill()
-            self.progress.score += 10
+            self.progress.score += 15
         bird_was_hit = self.player.snowballs.check_hit(
                 int(self.bird.x)+8, int(self.bird.y)+4)
         if bird_was_hit:
             self.bird.mode = self.bird.MODE_DEAD
-            self.progress.score += 20
+            self.progress.score += 25
 
     def play(self):
         pyxel.stop()
