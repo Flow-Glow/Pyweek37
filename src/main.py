@@ -99,6 +99,8 @@ class App:
         if not self.playing or self.player.dead:
             inputs = self.input.update()
             if Input.CONFIRM in inputs:
+                if not self.playing:
+                    pyxel.playm(0, 0, True)
                 self.play()
             elif Input.CANCEL in inputs and self.playing:
                 pyxel.stop()
