@@ -19,8 +19,8 @@ class App:
 
     def __init__(self) -> None:
         pyxel.init(120, 160, title=self.TITLE, fps=self.FPS)
-        pyxel.load("../Assets/tube.pyxres")
-        pyxel.load("../Assets/tube_audio.pyxres", True, True, False, False)  # just loads audio 
+        pyxel.load("Assets/tube.pyxres")
+        pyxel.load("Assets/tube_audio.pyxres", True, True, False, False)  # just loads audio
         self.input = Input()
         self.map = Map()
         self.sfx = Sfx()
